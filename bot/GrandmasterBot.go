@@ -5,7 +5,7 @@ type GrandmasterBot struct {
 
 }
 
-func (grandMasterBot *GrandmasterBot) playNextMove() bool {
+func (grandMasterBot *GrandmasterBot) playNextMove() (bool, []string) {
 	// TODO: implement
-	return true
+	return true, nil
 }

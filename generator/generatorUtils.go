@@ -70,6 +70,10 @@ func playPlacementPhase(game *dvonn.DvonnGame, players []dvonn.Player) ([]string
 }
 
 
+// TODO: this method isn't really independent as it is required to be called only after the placement phase is done
+// NOTE that we should only write independent method i.e. which should represent an action, here it is performing an
+// action but it's not independent, either add conditions inside the method to make this independent or just concatenate
+// this method with other other method.
 func playMovementPhase(game *dvonn.DvonnGame, currentTurnPlayer dvonn.Player) ([]string, []string) {
 
 	whiteMovesStore := make([]string, 0)

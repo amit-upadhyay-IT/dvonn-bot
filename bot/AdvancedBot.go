@@ -6,7 +6,7 @@ type AdvancedBot struct {
 }
 
 
-func (advancedBot *AdvancedBot) playNextMove() bool {
+func (advancedBot *AdvancedBot) playNextMove() (bool, []string) {
 	// TODO: implement
-	return true;
+	return true, nil;
 }

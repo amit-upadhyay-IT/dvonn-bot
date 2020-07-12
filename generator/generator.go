@@ -40,8 +40,6 @@ func generateGame() GamePlayStore {
 		log.Fatal(err)
 	}
 
-
-
 	gameStore := GamePlayStore{whiteMovesStore, blackMovesStore, winner}
 	return gameStore
 
