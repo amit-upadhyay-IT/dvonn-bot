@@ -2,9 +2,12 @@ package generator
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/amit-upadhyay-it/dvonn/dvonn"
 	"log"
 	"os"
+	"strconv"
+	"time"
 )
 
 
@@ -27,10 +30,10 @@ func generateGame() GamePlayStore {
 	dvonnGame := dvonn.GetDvonnGame(players, players[0])  // as first player owns white pieces
 
 	// do placement phase
-	whiteMovesStore, blackMovesStore, currentTurnPlayer := playPlacementPhase(dvonnGame, players)
+	whiteMovesStore, blackMovesStore, currentTurnPlayer, _ := playPlacementPhase(dvonnGame, players)
 
 	// movement phase starts
-	whiteMovementMoves, blackMovementStore := playMovementPhase(dvonnGame, currentTurnPlayer)
+	whiteMovementMoves, blackMovementStore, _ := playMovementPhase(dvonnGame, currentTurnPlayer)
 
 	whiteMovesStore = append(whiteMovesStore, whiteMovementMoves...)
 	blackMovesStore = append(blackMovesStore, blackMovementStore...)
@@ -52,6 +55,49 @@ type GamePlayStore struct {
 }
 
 
+func generateGameForTrainingModel() GameMovesWithResult {
+
+	players := getPlayers()
+	dvonnGame := dvonn.GetDvonnGame(players, players[0])  // as first player owns white pieces
+	moves := make([]string, 0)
+	placementMoves := make([]string, 0)
+	movementMoves := make([]string, 0)
+
+	// do placement phase
+	whiteMovesStore, blackMovesStore, currentTurnPlayer, placementMoves := playPlacementPhase(dvonnGame, players)
+
+	// movement phase starts
+	whiteMovementMoves, blackMovementStore, movementMoves := playMovementPhase(dvonnGame, currentTurnPlayer)
+
+	whiteMovesStore = append(whiteMovesStore, whiteMovementMoves...)
+	blackMovesStore = append(blackMovesStore, blackMovementStore...)
+
+	moves = append(moves, placementMoves...)
+	moves = append(moves, movementMoves...)
+
+	winner, err := dvonnGame.GetGameWinner()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if winner.GetWinnerColor() == dvonn.WINNER_WHITE {
+		gameStore := GameMovesWithResult{moves, "w;"+strconv.Itoa(winner.GetWinnerScore())+";"+strconv.Itoa(winner.GetLoserScore())}
+		return gameStore
+	} else if winner.GetWinnerColor() == dvonn.WINNER_DRAW {
+		gameStore := GameMovesWithResult{moves, "d;"+strconv.Itoa(winner.GetWinnerScore())+";"+strconv.Itoa(winner.GetLoserScore())}
+		return gameStore
+	} else {
+		gameStore := GameMovesWithResult{moves, "b;"+strconv.Itoa(winner.GetWinnerScore())+";"+strconv.Itoa(winner.GetLoserScore())}
+		return gameStore
+	}
+}
+
+type GameMovesWithResult struct {
+	Moves []string `json:"m"`
+	WinnerDetails string `json:"win"`
+}
+
+
 func GenerateNGames(n int) {
 	resultList := make([]GamePlayStore, 0)
 	for i := 0; i < n ; i++ {
@@ -59,7 +105,19 @@ func GenerateNGames(n int) {
 		resultList = append(resultList, gamePlayStore)
 	}
 	gameStoreSerialized, _ := json.Marshal(resultList)
-	AppendToFile("./data/game_moves.json", string(gameStoreSerialized)/*+"\n,"*/)
+	AppendToFile("./data/games_01.json", string(gameStoreSerialized)/*+"\n,"*/)
+}
+
+func GenerateNGamesForTrainingSet(n int) {
+	start := time.Now()
+	resultList := make([]GameMovesWithResult, 0)
+	for i := 0; i < n ; i++ {
+		gameMovesWithResult := generateGameForTrainingModel()
+		resultList = append(resultList, gameMovesWithResult)
+	}
+	gameStoreSerialized, _ := json.Marshal(resultList)
+	AppendToFile("./data/games_01.json", string(gameStoreSerialized)/*+"\n,"*/)
+	fmt.Printf("%s took %v\n", time.Since(start))
 }
 
 func AppendToFile(filename, value string) error {

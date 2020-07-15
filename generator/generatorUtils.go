@@ -22,8 +22,9 @@ func getPlayers() []dvonn.Player {
 /*
 plays the moves in placement phase and returns the white player moves and black player moves respectively
  */
-func playPlacementPhase(game *dvonn.DvonnGame, players []dvonn.Player) ([]string, []string, dvonn.Player) {
+func playPlacementPhase(game *dvonn.DvonnGame, players []dvonn.Player) ([]string, []string, dvonn.Player, []string) {
 
+	moves := make([]string, 0)  // for purpose of storing data for training the bot
 	cellIds := getIds()
 	currentPlayer := players[0]
 
@@ -40,9 +41,11 @@ func playPlacementPhase(game *dvonn.DvonnGame, players []dvonn.Player) ([]string
 		if game.GetGamePhase() == dvonn.PLACEMENT_PHASE {
 			if currentPlayer.GetPlayerColor() == dvonn.WHITE {
 				moveIds = append(moveIds, cellIds[whiteIds[whitePlacementCounter]])
+				moves = append(moves, cellIds[whiteIds[whitePlacementCounter]]+"|w")
 				whitePlacementCounter += 1
 			} else {
 				moveIds = append(moveIds, cellIds[blackIds[blackPlacementCounter]])
+				moves = append(moves, cellIds[blackIds[blackPlacementCounter]]+"|b")
 				blackPlacementCounter += 1
 			}
 		} else {
@@ -66,7 +69,7 @@ func playPlacementPhase(game *dvonn.DvonnGame, players []dvonn.Player) ([]string
 		currentPlayer = moveRes.GetNextPlayer()
 	}
 
-	return whiteMovesStore, blackMovesStore, currentPlayer
+	return whiteMovesStore, blackMovesStore, currentPlayer, moves
 }
 
 
@@ -74,10 +77,12 @@ func playPlacementPhase(game *dvonn.DvonnGame, players []dvonn.Player) ([]string
 // NOTE that we should only write independent method i.e. which should represent an action, here it is performing an
 // action but it's not independent, either add conditions inside the method to make this independent or just concatenate
 // this method with other other method.
-func playMovementPhase(game *dvonn.DvonnGame, currentTurnPlayer dvonn.Player) ([]string, []string) {
+func playMovementPhase(game *dvonn.DvonnGame, currentTurnPlayer dvonn.Player) ([]string, []string, []string) {
 
 	whiteMovesStore := make([]string, 0)
 	blackMovesStore := make([]string, 0)
+
+	moves := make([]string, 0)
 
 	for {
 		moveIds := make([]string, 0)
@@ -100,8 +105,10 @@ func playMovementPhase(game *dvonn.DvonnGame, currentTurnPlayer dvonn.Player) ([
 		if moveRes.IsActionSuccess() {
 			if currentTurnPlayer.GetPlayerColor() == dvonn.WHITE {
 				whiteMovesStore = append(whiteMovesStore, moveIds[0] + ":" + moveIds[1])
+				moves = append(moves, moveIds[0]+":"+moveIds[1]+"|w")
 			} else {
 				blackMovesStore = append(blackMovesStore, moveIds[0] + ":" + moveIds[1])
+				moves = append(moves, moveIds[0]+":"+moveIds[1]+"|b")
 			}
 		}
 		if moveRes.IsGameOver() {
@@ -113,7 +120,7 @@ func playMovementPhase(game *dvonn.DvonnGame, currentTurnPlayer dvonn.Player) ([
 		}
 		currentTurnPlayer = moveRes.GetNextPlayer()
 	}
-	return whiteMovesStore, blackMovesStore
+	return whiteMovesStore, blackMovesStore, moves
 }
 
 
