@@ -2,10 +2,12 @@ package oots
 
 import (
 	"../generator"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"github.com/amit-upadhyay-it/goutils/io"
 	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -18,8 +20,12 @@ func ConstructTree(fileName string) {
 		tree.Insert(gameMove.Moves, gameMove.WinnerDetails)
 	}
 	v, _ := json.Marshal(tree)
-	abs, _ := filepath.Abs("./data/model_01.json")
-	generator.AppendToFile(abs, string(v))
+	abs, _ := filepath.Abs("./data/model_02.json")
+	f, _ := os.Create(abs)
+	w := gzip.NewWriter(f)
+
+	w.Write(v)
+	//generator.AppendToFile(abs, v)
 
 }
 
