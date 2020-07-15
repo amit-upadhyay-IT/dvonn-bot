@@ -1,13 +1,16 @@
 package main
 
-import "../generator"
+import (
+	"../oots"
+	"path/filepath"
+)
 
 func main() {
 
-	//abs, _ := filepath.Abs("./data/game_moves.json")
-	//oots.ReadFile(abs)
+	abs, _ := filepath.Abs("./data/games_01.json")
+	oots.ConstructTree(abs)
 
-	generator.GenerateNGamesForTrainingSet(5000)
+	//generator.GenerateNGamesForTrainingSet(5000)
 
 }
 

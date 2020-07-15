@@ -1,34 +1,31 @@
 package oots
 
-import "github.com/amit-upadhyay-it/dvonn/dvonn"
-
-type gameStateNode struct {
-	childNode map[string]*gameStateNode
-	srcId string
-	destId string
-	playerColor dvonn.ChipColor
-	selectedCount int
-	winCount int
-	drawCount int
-	loseCount int
+type GameStateNode struct {
+	ChildNode        map[string]*GameStateNode `json:"ch"` // inside map the key is the identifier for each node
+	PlayerColor      string                    `json:"clr"`
+	SelectedCount    int                       `json:"c"`
+	WinCount         int                       `json:"w"`
+	DrawCount        int                       `json:"d"`
+	LoseCount        int                       `json:"l"`
+	TerminationCount int                       `json:"t"`
 }
 
-func GameStateNode(srcId, destId string, playClr dvonn.ChipColor) *gameStateNode {
-	return &gameStateNode{childNode:make(map[string]*gameStateNode) ,srcId:srcId, destId:destId, playerColor:playClr, selectedCount:1, winCount:0, drawCount:0, loseCount:0}
+func GetGameStateNode(playClr string) *GameStateNode {
+	return &GameStateNode{ChildNode: make(map[string]*GameStateNode), PlayerColor:playClr, SelectedCount:1, WinCount:0, DrawCount:0, LoseCount:0}
 }
 
-func (node *gameStateNode) IncSelectedCount() {
-	node.selectedCount++
+func (node *GameStateNode) IncSelectedCount() {
+	node.SelectedCount++
 }
 
-func (node *gameStateNode) IncWinCount() {
-	node.winCount++
+func (node *GameStateNode) IncWinCount() {
+	node.WinCount++
 }
 
-func (node *gameStateNode) IncLoseCount() {
-	node.loseCount++
+func (node *GameStateNode) IncLoseCount() {
+	node.LoseCount++
 }
 
-func (node *gameStateNode) IncDrawCount() {
-	node.drawCount++
+func (node *GameStateNode) IncDrawCount() {
+	node.DrawCount++
 }

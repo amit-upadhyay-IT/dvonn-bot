@@ -6,16 +6,24 @@ import (
 	"fmt"
 	"github.com/amit-upadhyay-it/goutils/io"
 	"log"
+	"path/filepath"
 )
 
 func ConstructTree(fileName string) {
 
-	gamesPlayed := ReadFile(fileName)
+	gameMoves := ReadFile(fileName)
+	tree := GetTreeInstance()
+	for _, gameMove := range gameMoves {
 
+		tree.Insert(gameMove.Moves, gameMove.WinnerDetails)
+	}
+	v, _ := json.Marshal(tree)
+	abs, _ := filepath.Abs("./data/model_01.json")
+	generator.AppendToFile(abs, string(v))
 
 }
 
-func ReadFile(fileName string) []generator.GamePlayStore {
+func ReadFile(fileName string) []generator.GameMovesWithResult {
 	// TODO: the file size me be very big, so reading all at once will occupy lots of memory in RAM, so avoid doing
 	// this by reading them in chunk and in do concurrent processing
 	// As the current architecture of the storage file is like if we go on reading chunk by check then deserializing
@@ -25,7 +33,7 @@ func ReadFile(fileName string) []generator.GamePlayStore {
 		log.Fatal(err)
 	}
 
-	var gameMoves []generator.GamePlayStore
+	var gameMoves []generator.GameMovesWithResult
 	err = json.Unmarshal(content, &gameMoves)
 	if err != nil {
 		log.Fatal(err)
