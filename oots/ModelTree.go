@@ -70,6 +70,4 @@ func (tree *ModelTree) Insert(items []string, score string) {
 			localRoot = nextNode  // assigning the just newly constructed node as the localRoot, coz next operations are supposed to be performed on it.
 		}
 	}
-	localRoot.TerminationCount++
 }
-

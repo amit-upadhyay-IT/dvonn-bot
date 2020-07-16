@@ -2,12 +2,10 @@ package oots
 
 import (
 	"../generator"
-	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"github.com/amit-upadhyay-it/goutils/io"
 	"log"
-	"os"
 	"path/filepath"
 )
 
@@ -19,13 +17,20 @@ func ConstructTree(fileName string) {
 
 		tree.Insert(gameMove.Moves, gameMove.WinnerDetails)
 	}
-	v, _ := json.Marshal(tree)
-	abs, _ := filepath.Abs("./data/model_02.json")
-	f, _ := os.Create(abs)
-	w := gzip.NewWriter(f)
+	//v, _ := json.Marshal(tree)
+	abs, _ := filepath.Abs("./data/model_5000games.json")
+	//f, _ := os.Create(abs)
+	//w := gzip.NewWriter(f)
+	//
+	//w.Write(v)
+	GetMaxNestedStructureCount(tree)
+	fmt.Println(maxCount)
 
-	w.Write(v)
-	//generator.AppendToFile(abs, v)
+	confidenceTree := GetConfidenceTree()
+	confidenceTree.ConstructConfidenceTree(tree)
+	v, _ := json.Marshal(confidenceTree)
+	fmt.Println("confidence tree constructed")
+	generator.AppendToFile(abs, string(v))
 
 }
 
@@ -46,4 +51,28 @@ func ReadFile(fileName string) []generator.GameMovesWithResult {
 	}
 	fmt.Println(len(gameMoves))
 	return gameMoves
+}
+
+
+func GetMaxNestedStructureCount(tree *ModelTree) {
+
+	_GetMaxNestedStructureCount(tree.Root, 0)
+}
+
+var maxCount int = 0
+
+func _GetMaxNestedStructureCount(root *GameStateNode, count int) {
+
+	if root.ChildNode == nil || len(root.ChildNode) == 0 {
+		if count > maxCount {
+			fmt.Println("count:", count)
+			//fmt.Println("upadhyay")
+			maxCount = count
+		}
+		return
+	}
+	for _, v := range root.ChildNode {
+		_GetMaxNestedStructureCount(v, count+1)
+		//fmt.Println("amit")
+	}
 }

@@ -105,7 +105,7 @@ func GenerateNGames(n int) {
 		resultList = append(resultList, gamePlayStore)
 	}
 	gameStoreSerialized, _ := json.Marshal(resultList)
-	AppendToFile("./data/games_01.json", string(gameStoreSerialized)/*+"\n,"*/)
+	AppendToFile("./data/100games.json", string(gameStoreSerialized)/*+"\n,"*/)
 }
 
 func GenerateNGamesForTrainingSet(n int) {
@@ -116,8 +116,8 @@ func GenerateNGamesForTrainingSet(n int) {
 		resultList = append(resultList, gameMovesWithResult)
 	}
 	gameStoreSerialized, _ := json.Marshal(resultList)
-	AppendToFile("./data/games_01.json", string(gameStoreSerialized)/*+"\n,"*/)
-	fmt.Printf("%s took %v\n", time.Since(start))
+	AppendToFile("./data/1games.json", string(gameStoreSerialized)/*+"\n,"*/)
+	fmt.Printf("%s took\n", time.Since(start))
 }
 
 func AppendToFile(filename, value string) error {

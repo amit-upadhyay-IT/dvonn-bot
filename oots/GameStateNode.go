@@ -7,7 +7,6 @@ type GameStateNode struct {
 	WinCount         int                       `json:"w"`
 	DrawCount        int                       `json:"d"`
 	LoseCount        int                       `json:"l"`
-	TerminationCount int                       `json:"t"`
 }
 
 func GetGameStateNode(playClr string) *GameStateNode {
