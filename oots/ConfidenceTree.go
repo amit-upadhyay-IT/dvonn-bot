@@ -13,7 +13,7 @@ func GetConfidenceTree() *ConfidenceTree {
 
 type ConfidenceNode struct {
 	Child      map[string]*ConfidenceNode `json:"c"`
-	SuitableId string                     `json:"s"`
+	SuitableId string                     `json:"s,omitempty"`
 }
 
 func GetConfidenceNode() *ConfidenceNode {

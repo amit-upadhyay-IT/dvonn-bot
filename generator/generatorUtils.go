@@ -171,7 +171,7 @@ func selectRandomIdForOriginAndDestinationPlace(dvonnGame *dvonn.DvonnGame, cell
 	loopCounter := 0
 	for {
 		// writing exit condition that if counter for this loop exceeds 55, either something is wrong or game is over
-		if loopCounter > 55 {
+		if loopCounter > 91 {
 			log.Fatal("game should be ended, please dont try to get origin and destination id now")
 		}
 		loopCounter++

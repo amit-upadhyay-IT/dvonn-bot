@@ -116,7 +116,7 @@ func GenerateNGamesForTrainingSet(n int) {
 		resultList = append(resultList, gameMovesWithResult)
 	}
 	gameStoreSerialized, _ := json.Marshal(resultList)
-	AppendToFile("./data/1games.json", string(gameStoreSerialized)/*+"\n,"*/)
+	AppendToFile("./data/3games.json", string(gameStoreSerialized)/*+"\n,"*/)
 	fmt.Printf("%s took\n", time.Since(start))
 }
 

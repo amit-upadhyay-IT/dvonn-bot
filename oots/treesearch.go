@@ -2,10 +2,12 @@ package oots
 
 import (
 	"../generator"
+	"compress/gzip"
 	"encoding/json"
 	"fmt"
 	"github.com/amit-upadhyay-it/goutils/io"
 	"log"
+	"os"
 	"path/filepath"
 )
 
@@ -18,11 +20,10 @@ func ConstructTree(fileName string) {
 		tree.Insert(gameMove.Moves, gameMove.WinnerDetails)
 	}
 	//v, _ := json.Marshal(tree)
-	abs, _ := filepath.Abs("./data/model_5000games.json")
-	//f, _ := os.Create(abs)
-	//w := gzip.NewWriter(f)
+	abs, _ := filepath.Abs("./data/model_3games.zip")
+	f, _ := os.Create(abs)
+	w := gzip.NewWriter(f)
 	//
-	//w.Write(v)
 	GetMaxNestedStructureCount(tree)
 	fmt.Println(maxCount)
 
@@ -30,6 +31,8 @@ func ConstructTree(fileName string) {
 	confidenceTree.ConstructConfidenceTree(tree)
 	v, _ := json.Marshal(confidenceTree)
 	fmt.Println("confidence tree constructed")
+	w.Write(v)
+	abs, _ = filepath.Abs("./data/model_3games.json")
 	generator.AppendToFile(abs, string(v))
 
 }
