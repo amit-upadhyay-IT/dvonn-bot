@@ -20,7 +20,7 @@ func ConstructTree(fileName string) {
 		tree.Insert(gameMove.Moves, gameMove.WinnerDetails)
 	}
 	//v, _ := json.Marshal(tree)
-	abs, _ := filepath.Abs("./data/model_3games.zip")
+	abs, _ := filepath.Abs("./data/model_500000games_opt.zip")
 	f, _ := os.Create(abs)
 	w := gzip.NewWriter(f)
 	//
@@ -32,7 +32,7 @@ func ConstructTree(fileName string) {
 	v, _ := json.Marshal(confidenceTree)
 	fmt.Println("confidence tree constructed")
 	w.Write(v)
-	abs, _ = filepath.Abs("./data/model_3games.json")
+	abs, _ = filepath.Abs("./data/model_500000games_opt.json")
 	generator.AppendToFile(abs, string(v))
 
 }

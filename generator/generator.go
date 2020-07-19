@@ -55,7 +55,7 @@ type GamePlayStore struct {
 }
 
 
-func generateGameForTrainingModel() GameMovesWithResult {
+func generateGameForTrainingModel(movementPhaseOnly bool) GameMovesWithResult {
 
 	players := getPlayers()
 	dvonnGame := dvonn.GetDvonnGame(players, players[0])  // as first player owns white pieces
@@ -72,7 +72,9 @@ func generateGameForTrainingModel() GameMovesWithResult {
 	whiteMovesStore = append(whiteMovesStore, whiteMovementMoves...)
 	blackMovesStore = append(blackMovesStore, blackMovementStore...)
 
-	moves = append(moves, placementMoves...)
+	if !movementPhaseOnly {
+		moves = append(moves, placementMoves...)
+	}
 	moves = append(moves, movementMoves...)
 
 	winner, err := dvonnGame.GetGameWinner()
@@ -81,13 +83,13 @@ func generateGameForTrainingModel() GameMovesWithResult {
 	}
 
 	if winner.GetWinnerColor() == dvonn.WINNER_WHITE {
-		gameStore := GameMovesWithResult{moves, "w;"+strconv.Itoa(winner.GetWinnerScore())+";"+strconv.Itoa(winner.GetLoserScore())}
+		gameStore := GameMovesWithResult{moves, "w;"+strconv.Itoa(winner.WinnerScore)+";"+strconv.Itoa(winner.LoserScore)}
 		return gameStore
 	} else if winner.GetWinnerColor() == dvonn.WINNER_DRAW {
-		gameStore := GameMovesWithResult{moves, "d;"+strconv.Itoa(winner.GetWinnerScore())+";"+strconv.Itoa(winner.GetLoserScore())}
+		gameStore := GameMovesWithResult{moves, "d;"+strconv.Itoa(winner.WinnerScore)+";"+strconv.Itoa(winner.LoserScore)}
 		return gameStore
 	} else {
-		gameStore := GameMovesWithResult{moves, "b;"+strconv.Itoa(winner.GetWinnerScore())+";"+strconv.Itoa(winner.GetLoserScore())}
+		gameStore := GameMovesWithResult{moves, "b;"+strconv.Itoa(winner.WinnerScore)+";"+strconv.Itoa(winner.LoserScore)}
 		return gameStore
 	}
 }
@@ -112,11 +114,11 @@ func GenerateNGamesForTrainingSet(n int) {
 	start := time.Now()
 	resultList := make([]GameMovesWithResult, 0)
 	for i := 0; i < n ; i++ {
-		gameMovesWithResult := generateGameForTrainingModel()
+		gameMovesWithResult := generateGameForTrainingModel(true)
 		resultList = append(resultList, gameMovesWithResult)
 	}
 	gameStoreSerialized, _ := json.Marshal(resultList)
-	AppendToFile("./data/3games.json", string(gameStoreSerialized)/*+"\n,"*/)
+	AppendToFile("./data/400000games_optimize.json", string(gameStoreSerialized)/*+"\n,"*/)
 	fmt.Printf("%s took\n", time.Since(start))
 }
 
